@@ -25,7 +25,7 @@ về những gì đang diễn ra và kiến thức của bạn sẽ phát triể
 ## First Step
 
 <p align="center">
-    <img src="https://raw.githubusercontent.com/hieuvu98/laravel-8-docs-translate/master/docs/images/life-cycle.png" alt="Life Cycle" />
+    <img src="https://raw.githubusercontent.com/hieuvu98/translate-docs-laravel8/main/translate-docs/lifecycle.png" alt="Life Cycle" />
 </p>
 
 Đầu vào của mọi request trong Laravel nằm trong file <code>index.php</code>. Tất cả các request được điều hướng đến file
