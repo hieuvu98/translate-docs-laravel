@@ -98,3 +98,216 @@ Route::view('/welcome', 'welcome', ['name' => 'Taylor']);
 
 ## Route Parameters
 ### Required Parameters
+Đôi khi bạn sẽ cần nắm bắt các phân mảnh của URI trong tuyến của bạn. Ví dụ, bạn cần lấy USER ID trên URL. Bạn có thể làm việc này bằng cách định nghĩa các tham số của tuyến:
+```PHP
+Route::get('/user/{id}', function ($id) {
+    return 'User '.$id;
+});
+```
+
+Bạn có thể định nghĩa nhiều tham số cho tuyến theo yêu cầu của bạn:
+```PHP
+Route::get('/posts/{post}/comments/{comment}', function ($postId, $commentId) {
+    //
+});
+```
+
+Các tham số của tuyến đường luôn luôn được bọc trong dấu `{}` và phải bao gồm các ký tự chữ cái. Dấu gạch dưới (`_`) cũng có thể được chấp nhận trong tên tham số của tuyến.
+Tham số của tuyến sẽ được đưa vào trong callback của tuyến/controller dựa trên thứ tự - 
+
+### Parameters & Dependency Injection
+Nếu tuyến đường của bạn có các phụ thuộc mà bạn muốn Service Container tự động tiêm vào bên trong callback của tuyến đường, bạn có thể liệt kê các tham số sau các phụ thuộc:
+```PHP
+use Illuminate\Http\Request;
+
+Route::get('/user/{id}', function (Request $request, $id) {
+    return 'User '.$id;
+});
+```
+
+## Optional Parameters
+Đôi khi bạn cần xác định các tham số của tuyến đường không phải lúc nào cũng có trên URI. Bạn có thể làm bằng cách đặt dấu `?` sau tên tham số. Đảm bảo cung cấp giá trị mặc định
+cho các biến tương ứng:
+```PHP
+Route::get('/user/{name?}', function ($name = null) {
+    return $name;
+});
+
+Route::get('/user/{name?}', function ($name = 'John') {
+    return $name;
+});
+```
+
+## Regular Expression Constraints
+Bạn có thể ràng buộc định dạng tham số của tuyến bằng cách sử dụng phương thức `where` trên một tuyến. Phương thức `where` chấp nhận tên của tham số và một biếu thức chính quy
+định nghĩa để ràng buộc các tham số:
+```PHP
+Route::get('/user/{name}', function ($name) {
+    //
+})->where('name', '[A-Za-z]+');
+
+Route::get('/user/{id}', function ($id) {
+    //
+})->where('id', '[0-9]+');
+
+Route::get('/user/{id}/{name}', function ($id, $name) {
+    //
+})->where(['id' => '[0-9]+', 'name' => '[a-z]+']);
+```
+
+Thông thường, một số biểu thức chính quy có các phương thức hỗ trợ cho phép bạn thêm các ràng buộc một cách nhanh chóng vào tuyến đường:
+```PHP
+Route::get('/user/{id}/{name}', function ($id, $name) {
+    //
+})->whereNumber('id')->whereAlpha('name');
+
+Route::get('/user/{name}', function ($name) {
+    //
+})->whereAlphaNumeric('name');
+
+Route::get('/user/{id}', function ($id) {
+    //
+})->whereUuid('id');
+```
+
+ Nếu các request đến không khớp với các rảng buộc thì một phản hồi HTTP 404 sẽ được trả về.
+
+ ### Global Constraints
+ Nếu bạn muốn các tham số của tuyến luôn luôn bị ràng buộc một biểu thức chính quy cho trước, bạn có thể sử dụng phương thức `pattern` trong phương thức `boot`
+ của `App\Providers\RouteServiceProvide`:
+ ```PHP
+ /**
+ * Define your route model bindings, pattern filters, etc.
+ *
+ * @return void
+ */
+public function boot()
+{
+    Route::pattern('id', '[0-9]+');
+}
+```
+
+Khi các mẫu đã được định nghĩa, nó sẽ tự động được áp dụng cho tất cả các tuyến đường sử dụng tên tham số đó:
+```PHP
+Route::get('/user/{id}', function ($id) {
+    // Only executed if {id} is numeric...
+});
+```
+
+### Encoded Forward Slashes
+Thành phần định tuyến Laravel cho phép tất cả các ký tự ngoại từ `/` hiện diện trong giá trị tham số tuyến đường. Bạn phải cho phép một cách rõ ràng `/` trở thành một phần giữ chỗ 
+bằng cách sử dụng `where` với một biểu thức điều kiện:
+```PHP
+Route::get('/search/{search}', function ($search) {
+    return $search;
+})->where('search', '.*');
+```
+
+## Named Routes
+Đặt tên cho tuyến đường cho phép tạo URL rất thuận tiện hoặc điều hướng đến một tuyến cụ thể. Bạn có thể xác định tên của tuyến đường bằng cách sử dụng phương thức `name` khi tạo tuyến đường:
+```PHP
+Route::get('/user/profile', function () {
+    //
+})->name('profile');
+```
+
+Bạn có thể chỉ định tên tuyến cho các hành động của controller:
+```PHP
+Route::get(
+    '/user/profile',
+    [UserProfileController::class, 'show']
+)->name('profile');
+```
+
+### Generating URLs To Named Routes
+Khi bạn chỉ định tên cho một tuyến đường nhất định, bạn có thể sử dụng tên của tuyến đường khi tạo một URL hoặc điều hướng thông qua Laravel:
+```PHP
+// Generating URLs...
+$url = route('profile');
+
+// Generating Redirects...
+return redirect()->route('profile');
+```
+
+Nếu tuyến được đặt tên xác định các tham số, bạn có thể truyền tham số như đối số thứ hay của hàm `route`. Các thông số đã cho sẽ tự động được chèn vào URL đã được tạo ở đúng vị trí của chúng:
+```PHP
+Route::get('/user/{id}/profile', function ($id) {
+    //
+})->name('profile');
+
+$url = route('profile', ['id' => 1]);
+```
+
+Nếu bạn truyền các tham số bổ sung trong mảng, cặp key/value sẽ tự động được thêm vào URL đã được tạo:
+```PHP
+Route::get('/user/{id}/profile', function ($id) {
+    //
+})->name('profile');
+
+$url = route('profile', ['id' => 1, 'photos' => 'yes']);
+
+// /user/1/profile?photos=yes
+```
+
+### Inspecting The Current Route
+
+Nếu bạn muốn xác định xem liệu request hiện tại được chuyển đến một tuyến đường đã được đặt tên rồi hay không, ban có thể sử dụng phương thức `named`:
+```PHP
+/**
+ * Handle an incoming request.
+ *
+ * @param  \Illuminate\Http\Request  $request
+ * @param  \Closure  $next
+ * @return mixed
+ */
+public function handle($request, Closure $next)
+{
+    if ($request->route()->named('profile')) {
+        //
+    }
+
+    return $next($request);
+}
+```
+
+## Route Groups
+Nhóm tuyến đường cho phép bạn chia sẻ các thuộc tính như middleware trên một lượng lớn các tuyến mà không cần định nghia cho từng tuyến đường riêng lẻ.
+Các nhóm lồng nhau cố gắng hợp nhất thuộc tính với nhóm mẹ một cách thông minh nhất. Middleware và điều kiện `where` được gộp lại trong khi tên và tiền tô được thêm vào.
+Dấu phân cách không gian tên và dấu `/` tự động được thêm vào một cách thích hợp.
+
+### Middleware
+Để gán middleware cho tất cả tuyến đường nằm trong nhóm, bạn cần sử dụng phương thức `middlware` trước khi khai báo nhóm. Middleware sẽ được thực thi theo thứ tự liệt kê trong mảng:  
+```PHP
+Route::middleware(['first', 'second'])->group(function () {
+    Route::get('/', function () {
+        // Uses first & second middleware...
+    });
+
+    Route::get('/user/profile', function () {
+        // Uses first & second middleware...
+    });
+});
+```
+
+### Subdomain Routing
+Nhóm các tuyến đường cũng có thể được sử dụng để xử lý định tuyến subdomain. Các Subdomain có thể được chỉ định các tham số giống như tuyến URI, cho phép bạn lấy một phần
+của subdomain để sử dụng trong tuyến đường hoặc controller. Subdomain có thể được chỉ định bằng cách gọi phương thức `domain` trước khi định nghĩa một tuyến đường:
+```PHP
+Route::domain('{account}.example.com')->group(function () {
+    Route::get('user/{id}', function ($account, $id) {
+        //
+    });
+});
+```
+
+### Route Prefixes
+Phương thức `prefix` có thể được sử dụng để đặt tiền tố cho mỗi tuyến đường trong nhóm với một URI nhất định:
+```PHP
+Route::prefix('admin')->group(function () {
+    Route::get('/users', function () {
+        // Matches The "/admin/users" URL
+    });
+});
+```
+### Route Name Prefixes
+
