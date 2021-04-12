@@ -310,4 +310,187 @@ Route::prefix('admin')->group(function () {
 });
 ```
 ### Route Name Prefixes
+Phương thức `name` có thể được sử dụng để đặt tiền tố cho tên của mỗi tuyến đường trong nhóm với một chuỗi cho trước. Ví dụ, bạn muốn đặ tiền tố lên tất cả tên tuyến đường có trong nhóm với tên là `admin`. Chuỗi đã cho được đặt làm tiền tố cho tên tuyến, vì vậy chúng ta sẽ đảm bảo rằng cũng cấp dấu `.` sau ký tự tiền tố:
+```PHP
+Route::name('admin.')->group(function () {
+    Route::get('/users', function () {
+        // Route assigned name "admin.users"...
+    })->name('users');
+});
+```
 
+## Route Model Binding
+Khi đẩy vào một ID của model trên một tuyến đường hoặc hành động của controller, ban sẽ thường xuyên truy vấn vào database để truy xuất một model tương ứng với ID đó. Laravel cung cấp một cách thuận tiện để tự động đưa ra các model instance từ tuyến đường của bạn. Ví dụ, thay vì đẩy vào ID user, bạn có thể đẩy vào toàn bộ một  `user` model khớp với user ID đã cho.
+
+### Implicit Binding
+Laravel tự động giải quyết Eloquent model được định nghĩa trên các tuyến đường hoặc hành động controller có tên biến phù hợp với tên một phân đoạn của tuyến. Ví dụ:
+```PHP
+use App\Models\User;
+
+Route::get('/users/{user}', function (User $user) {
+    return $user->email;
+});
+```
+
+Bởi vì biến `user` có kiểu gợi ý như Eloquent model `App\Models\User` và tên biến khớp với phân đoạn `{user}` của URI. Laravel sẽ tự động đẩy một model instance có ID khớp với giá trị tương ứng từ request URI. Nếu không tìm thấy modal instance nào trong database, một phản hổi HTTP 404 sẽ tự đông tạo ra.
+
+Tất nhiên, ràng buộc ngầm định cũng có thể sử dụng cho controller:
+```PHP
+use App\Http\Controllers\UserController;
+use App\Models\User;
+
+// Route definition...
+Route::get('/users/{user}', [UserController::class, 'show']);
+
+// Controller method definition...
+public function show(User $user)
+{
+    return view('user.profile', ['user' => $user]);
+}
+```
+#### Customizing The Key
+Thỉnh thoảng bạn muốn giải quyết Eloquent model bằng cách sử dụng cột khác `id`.
+Làm như vầy, bạn có thể xác định cột trong tham số định nghĩa của tuyến đường:
+```PHP
+use App\Models\Post;
+
+Route::get('/posts/{post:slug}', function (Post $post) {
+    return $post;
+});
+```
+
+Nếu bạn muốn ràng buộc model để luôn luôn sử dụng cột trong database khác với cột `id` khi lấy ra một lớp model nhất định, bạn có thể ghi đè lên phương thức `getRouteKeyName` trong Eloquent model:
+```PHP
+/**
+ * Get the route key for the model.
+ *
+ * @return string
+ */
+public function getRouteKeyName()
+{
+    return 'slug';
+}
+```
+
+#### Custom Keys & Scoping
+Khi ngầm định ràng buộc nhiều Eloquent model trong một định nghĩa tuyến đường duy nhất, bạn có thể muốn mở rộng phạm vi Eloquent model thứ hai sao cho nó phải là con của Eloquent model đứng trước. Ví dụ, hãy xem cách định nghĩa tuyến đường dưới đây để lấy ra một bài đăng trên blog có slug của một người dùng cụ thể:
+```PHP
+Route::get('/users/{user}/posts/{post:slug}', function (User $user, Post $post) {
+    return $post;
+});
+```
+
+Khi sử dụng ràng buộc ngầm định có khóa được tùy chỉnh như một thông số tuyến lồng nhau, Laravel sẽ tự động xác định phạm vi truy vấn để lấy ra một model được lồng bởi cha của nó bằng cách sử dụng quy ước về mối quan hệ của nó với cha mẹ. Trong trường hợp này, Nó sẽ được giả sử là model `User` có một quan hệ được đặt tên mà `posts` nó có thể được sử dụng để lấy ra model `post`.
+
+### Customizing Missing Model Behavior
+Thông thường, một phản hồi HTTP 404 sẽ được tạo ra nếu model đã ràng buộc ngầm định không được tìm thấy. Tuy nhiên, bạn có thể tùy chỉnh hành vi bằng cách gọi phương thức `misssing` khi định nghĩa tuyến đường. Phương thức `missing` chấp nhận một closure, nó sẽ đượ gọi nếu một model ràng buộc ngầm định không được tìm thấy:
+```PHP
+use App\Http\Controllers\LocationsController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
+
+Route::get('/locations/{location:slug}', [LocationsController::class, 'show'])
+        ->name('locations.view')
+        ->missing(function (Request $request) {
+            return Redirect::route('locations.index');
+        });
+```
+
+### Explicit Binding
+Để đăng ký rang buộc tường minh, sử dụng phương thức `model` của tuyến đường để chỉ định lớp cho tham số cho trước. Bạn nên định nghĩa các ràng buộc tường minh ở đầu lớp `RouteServiceProvider ` trong phương thức `boot`:
+```PHP
+use App\Models\User;
+use Illuminate\Support\Facades\Route;
+
+/**
+ * Define your route model bindings, pattern filters, etc.
+ *
+ * @return void
+ */
+public function boot()
+{
+    Route::model('user', User::class);
+
+    // ...
+}
+```
+Tiếp theo, định nghĩa một tuyến chứa tham số `{user}`:
+```PHP
+use App\Models\User;
+
+Route::get('/users/{user}', function (User $user) {
+    //
+});
+```
+
+#### Customizing The Resolution Logic
+Nếu bạn muốn định nghĩa một logic giải quyết ràng buộc model của riêng bạn, bạn có thể sử dụng phương thức `Route::bind`. Một closure bạn truyền vào phương thức `bind` sẽ nhận giá trị của phân đoạn URI và sẽ trả về một instance của lớp được đưa vào tuyến. Tuy chỉnh này sẽ được đặt trong phương thức `boot` của `RouteServiceProvider`:
+```PHP
+use App\Models\User;
+use Illuminate\Support\Facades\Route;
+
+/**
+ * Define your route model bindings, pattern filters, etc.
+ *
+ * @return void
+ */
+public function boot()
+{
+    Route::bind('user', function ($value) {
+        return User::where('name', $value)->firstOrFail();
+    });
+
+    // ...
+}
+```
+
+Ngoài ra bạn có thể ghi đè lên phương thức `resolveRouteBinding` trong Eloquent model.
+```PHP
+/**
+ * Retrieve the model for a bound value.
+ *
+ * @param  mixed  $value
+ * @param  string|null  $field
+ * @return \Illuminate\Database\Eloquent\Model|null
+ */
+public function resolveRouteBinding($value, $field = null)
+{
+    return $this->where('name', $value)->firstOrFail();
+}
+```
+
+## Fallback Routes
+Sử dụng phương thức `Route:fallback`, bạn có thể định nghĩa một tuyến cái mà sẽ được thực hiện khi không có tuyến nào khác khớp với request đến. 
+```PHP
+Route::fallback(function () {
+    //
+});
+
+```
+
+## Form Method Spoofing
+HTML form không hỗ trợ `PUT`, `PATCH`, or `DELETE`. Tuy nhiên, khi định nghĩa các tuyến đường `PUT`, `PATCH`, or `DELETE` để gọi từ form html, bạn sẽ cần thêm một trường ẩn `_method` từ form. Giá trị gửi đi với trường `_method` sẽ được sử dụng như một HTTP resquest:
+```PHP
+<form action="/example" method="POST">
+    <input type="hidden" name="_method" value="PUT">
+    <input type="hidden" name="_token" value="{{ csrf_token() }}">
+</form>
+```
+
+Bạn cũng có thể sử dụng `method~ của [Blade directive](https://laravel.com/docs/8.x/blade):
+```PHP
+<form action="/example" method="POST">
+    @method('PUT')
+    @csrf
+</form>
+```
+
+## Accessing The Current Route
+Bạn có thể sử dụng các phương thức `current`, `currentRouteName`, và `currentRouteAction` để truy cập thông tin về tuyến đường đang xử lý request:
+```PHP
+use Illuminate\Support\Facades\Route;
+
+$route = Route::current(); // Illuminate\Routing\Route
+$name = Route::currentRouteName(); // string
+$action = Route::currentRouteAction(); // string
+```
