@@ -10,7 +10,7 @@
 # Routing
 
 ## Cơ bản về định tuyến
-Các tuyến đường cơ bản trong Laravel chấp nhận một URI và một closure, cung cấp một phương thức đơn giản và dễ hiểu để định nghĩa các tuyến đường mà không cần đến các file cấu hình phức tạp:
+Các tuyến đường cơ bản trong Laravel chấp nhận một URI và một closure, cung cấp một method đơn giản và dễ hiểu để định nghĩa các tuyến đường mà không cần đến các file cấu hình phức tạp:
 ```PHP
 use Illuminate\Support\Facades\Route;
 
@@ -30,7 +30,7 @@ Route::get('/user', [UserController::class, 'index']);
 ```
 Các tuyến đường đã được định nghĩa trong `routes/api.php` được lồng trong một nhóm tuyến đường bởi `RouteServiceProvider`. Trong nhóm này, tiến tố URI `/api` tự động được áp dụng vì thế bạn không cần làm thủ công bằng cách áp dụng nó cho mỗi tuyến đường trong tệp. Bạn có thể sửa đổi tiền tố và các tùy chọn cho nhóm tuyến đường khác bằng cách sử đổi class `RouteServiceProvider`.
 
-### Các phương thức định tuyến có sẵn
+### Các method định tuyến có sẵn
 Bộ định tuyến cho phép bạn đăng ký các tuyến đáp ứng với bất kỳ hành động HTTP:
 ```PHP
 Route::get($uri, $callback);
@@ -41,7 +41,7 @@ Route::delete($uri, $callback);
 Route::options($uri, $callback);
 ```
 
-Thông thường bạn cần phải đăng ký một tuyến với nhiều hành động HTTP. Bạn cũng có thể sử dụng phương thức `match`. Hoặc bạn có thể đăng ký một tuyến mà đáp ứng với tất cả hành động HTTP bằng cách sử dụng phương thức `any`:
+Thông thường bạn cần phải đăng ký một tuyến với nhiều hành động HTTP. Bạn cũng có thể sử dụng method `match`. Hoặc bạn có thể đăng ký một tuyến mà đáp ứng với tất cả hành động HTTP bằng cách sử dụng method `any`:
 ```PHP
 Route::match(['get', 'post'], '/', function () {
     //
@@ -72,7 +72,7 @@ Bất kỳ HTML form trỏ đến các tuyến `POST`,`PUT`, `PATCH` hoặc `DEL
 ```
 
 ## Điều hướng tuyến đường
-Nếu bạn định nghĩa một tuyến để điều hướng đến URI khác, bạn có thể sử dụng phương thức `Route::redirect`. Đây là phương thức cung cấp một cú pháp rút gọn thuận tiện bởi vì bạn không cần phải định nghĩa một tuyến đường đầy đủ hoặc controller để thực hiện một điều hướng đơn giản:
+Nếu bạn định nghĩa một tuyến để điều hướng đến URI khác, bạn có thể sử dụng method `Route::redirect`. Đây là method cung cấp một cú pháp rút gọn thuận tiện bởi vì bạn không cần phải định nghĩa một tuyến đường đầy đủ hoặc controller để thực hiện một điều hướng đơn giản:
 ```PHP
 Route::redirect('/here', '/there');
 ```
@@ -82,14 +82,14 @@ Route::redirect('/here', '/there');
 Route::redirect('/here', '/there', 301);
  ```
 
-Hoặc bạn có thể sử dụng phương thức `Route::permanentRedirect` để trả về một status code `301`:
+Hoặc bạn có thể sử dụng method `Route::permanentRedirect` để trả về một status code `301`:
 ```PHP
 Route::permanentRedirect('/here', '/there');
 ```
 
 ## View Routes
 
-Nếu tuyến đường của bạn chỉ trả về một [view](https://laravel.com/docs/8.x/views), bạn có thể sử dụng phương thức `Route::view`. Giống như phương thức `Route::redirect` nó cung cấp một cú pháp rút gọn đơn giản. Phương thức `view` chấp nhận một URI như dối số đầu tiên, và tên view như đối số thứ hai của nó. Ngoài ra, bạn có thể cung cấp một mảng dữ liệu để truyền vào view như một lựa chọn đối số thứ ba:
+Nếu tuyến đường của bạn chỉ trả về một [view](https://laravel.com/docs/8.x/views), bạn có thể sử dụng method `Route::view`. Giống như method `Route::redirect` nó cung cấp một cú pháp rút gọn đơn giản. method `view` chấp nhận một URI như dối số đầu tiên, và tên view như đối số thứ hai của nó. Ngoài ra, bạn có thể cung cấp một mảng dữ liệu để truyền vào view như một lựa chọn đối số thứ ba:
 ```PHP
 Route::view('/welcome', 'welcome');
 
@@ -139,7 +139,7 @@ Route::get('/user/{name?}', function ($name = 'John') {
 ```
 
 ## Ràng buộc bằng biểu thức chính quy
-Bạn có thể ràng buộc định dạng tham số của tuyến bằng cách sử dụng phương thức `where` trên một tuyến. Phương thức `where` chấp nhận tên của tham số và một biếu thức chính quy
+Bạn có thể ràng buộc định dạng tham số của tuyến bằng cách sử dụng method `where` trên một tuyến. method `where` chấp nhận tên của tham số và một biếu thức chính quy
 định nghĩa để ràng buộc các tham số:
 ```PHP
 Route::get('/user/{name}', function ($name) {
@@ -155,7 +155,7 @@ Route::get('/user/{id}/{name}', function ($id, $name) {
 })->where(['id' => '[0-9]+', 'name' => '[a-z]+']);
 ```
 
-Thông thường, một số biểu thức chính quy có các phương thức hỗ trợ cho phép bạn thêm các ràng buộc một cách nhanh chóng vào tuyến đường:
+Thông thường, một số biểu thức chính quy có các method hỗ trợ cho phép bạn thêm các ràng buộc một cách nhanh chóng vào tuyến đường:
 ```PHP
 Route::get('/user/{id}/{name}', function ($id, $name) {
     //
@@ -173,7 +173,7 @@ Route::get('/user/{id}', function ($id) {
  Nếu các request đến không khớp với các rảng buộc thì một phản hồi HTTP 404 sẽ được trả về.
 
  ### Hạn chế toàn cục
- Nếu bạn muốn các tham số của tuyến luôn luôn bị ràng buộc một biểu thức chính quy cho trước, bạn có thể sử dụng phương thức `pattern` trong phương thức `boot`
+ Nếu bạn muốn các tham số của tuyến luôn luôn bị ràng buộc một biểu thức chính quy cho trước, bạn có thể sử dụng method `pattern` trong method `boot`
  của `App\Providers\RouteServiceProvide`:
  ```PHP
  /**
@@ -204,7 +204,7 @@ Route::get('/search/{search}', function ($search) {
 ```
 
 ## Đặt tên cho tuyến đường
-Đặt tên cho tuyến đường cho phép tạo URL rất thuận tiện hoặc điều hướng đến một tuyến cụ thể. Bạn có thể xác định tên của tuyến đường bằng cách sử dụng phương thức `name` khi tạo tuyến đường:
+Đặt tên cho tuyến đường cho phép tạo URL rất thuận tiện hoặc điều hướng đến một tuyến cụ thể. Bạn có thể xác định tên của tuyến đường bằng cách sử dụng method `name` khi tạo tuyến đường:
 ```PHP
 Route::get('/user/profile', function () {
     //
@@ -251,7 +251,7 @@ $url = route('profile', ['id' => 1, 'photos' => 'yes']);
 
 ### Kiểm tra tuyến hiện tại
 
-Nếu bạn muốn xác định xem liệu request hiện tại được chuyển đến một tuyến đường đã được đặt tên rồi hay không, ban có thể sử dụng phương thức `named`:
+Nếu bạn muốn xác định xem liệu request hiện tại được chuyển đến một tuyến đường đã được đặt tên rồi hay không, ban có thể sử dụng method `named`:
 ```PHP
 /**
  * Handle an incoming request.
@@ -276,7 +276,7 @@ Các nhóm lồng nhau cố gắng hợp nhất thuộc tính với nhóm mẹ m
 Dấu phân cách không gian tên và dấu `/` tự động được thêm vào một cách thích hợp.
 
 ### Middleware
-Để gán middleware cho tất cả tuyến đường nằm trong nhóm, bạn cần sử dụng phương thức `middlware` trước khi khai báo nhóm. Middleware sẽ được thực thi theo thứ tự liệt kê trong mảng:  
+Để gán middleware cho tất cả tuyến đường nằm trong nhóm, bạn cần sử dụng method `middlware` trước khi khai báo nhóm. Middleware sẽ được thực thi theo thứ tự liệt kê trong mảng:  
 ```PHP
 Route::middleware(['first', 'second'])->group(function () {
     Route::get('/', function () {
@@ -291,7 +291,7 @@ Route::middleware(['first', 'second'])->group(function () {
 
 ### Subdomain Routing
 Nhóm các tuyến đường cũng có thể được sử dụng để xử lý định tuyến subdomain. Các Subdomain có thể được chỉ định các tham số giống như tuyến URI, cho phép bạn lấy một phần
-của subdomain để sử dụng trong tuyến đường hoặc controller. Subdomain có thể được chỉ định bằng cách gọi phương thức `domain` trước khi định nghĩa một tuyến đường:
+của subdomain để sử dụng trong tuyến đường hoặc controller. Subdomain có thể được chỉ định bằng cách gọi method `domain` trước khi định nghĩa một tuyến đường:
 ```PHP
 Route::domain('{account}.example.com')->group(function () {
     Route::get('user/{id}', function ($account, $id) {
@@ -301,7 +301,7 @@ Route::domain('{account}.example.com')->group(function () {
 ```
 
 ### Tiền tố tuyến đường
-Phương thức `prefix` có thể được sử dụng để đặt tiền tố cho mỗi tuyến đường trong nhóm với một URI nhất định:
+method `prefix` có thể được sử dụng để đặt tiền tố cho mỗi tuyến đường trong nhóm với một URI nhất định:
 ```PHP
 Route::prefix('admin')->group(function () {
     Route::get('/users', function () {
@@ -310,7 +310,7 @@ Route::prefix('admin')->group(function () {
 });
 ```
 ### Tiền tố tên tuyến đường
-Phương thức `name` có thể được sử dụng để đặt tiền tố cho tên của mỗi tuyến đường trong nhóm với một chuỗi cho trước. Ví dụ, bạn muốn đặ tiền tố lên tất cả tên tuyến đường có trong nhóm với tên là `admin`. Chuỗi đã cho được đặt làm tiền tố cho tên tuyến, vì vậy chúng ta sẽ đảm bảo rằng cũng cấp dấu `.` sau ký tự tiền tố:
+method `name` có thể được sử dụng để đặt tiền tố cho tên của mỗi tuyến đường trong nhóm với một chuỗi cho trước. Ví dụ, bạn muốn đặ tiền tố lên tất cả tên tuyến đường có trong nhóm với tên là `admin`. Chuỗi đã cho được đặt làm tiền tố cho tên tuyến, vì vậy chúng ta sẽ đảm bảo rằng cũng cấp dấu `.` sau ký tự tiền tố:
 ```PHP
 Route::name('admin.')->group(function () {
     Route::get('/users', function () {
@@ -359,7 +359,7 @@ Route::get('/posts/{post:slug}', function (Post $post) {
 });
 ```
 
-Nếu bạn muốn ràng buộc model để luôn luôn sử dụng cột trong database khác với cột `id` khi lấy ra một lớp model nhất định, bạn có thể ghi đè lên phương thức `getRouteKeyName` trong Eloquent model:
+Nếu bạn muốn ràng buộc model để luôn luôn sử dụng cột trong database khác với cột `id` khi lấy ra một lớp model nhất định, bạn có thể ghi đè lên method `getRouteKeyName` trong Eloquent model:
 ```PHP
 /**
  * Get the route key for the model.
@@ -383,7 +383,7 @@ Route::get('/users/{user}/posts/{post:slug}', function (User $user, Post $post) 
 Khi sử dụng ràng buộc ngầm định có khóa được tùy chỉnh như một thông số tuyến lồng nhau, Laravel sẽ tự động xác định phạm vi truy vấn để lấy ra một model được lồng bởi cha của nó bằng cách sử dụng quy ước về mối quan hệ của nó với cha mẹ. Trong trường hợp này, Nó sẽ được giả sử là model `User` có một quan hệ được đặt tên mà `posts` nó có thể được sử dụng để lấy ra model `post`.
 
 ### Customizing Missing Model Behavior
-Thông thường, một phản hồi HTTP 404 sẽ được tạo ra nếu model đã ràng buộc ngầm định không được tìm thấy. Tuy nhiên, bạn có thể tùy chỉnh hành vi bằng cách gọi phương thức `misssing` khi định nghĩa tuyến đường. Phương thức `missing` chấp nhận một closure, nó sẽ đượ gọi nếu một model ràng buộc ngầm định không được tìm thấy:
+Thông thường, một phản hồi HTTP 404 sẽ được tạo ra nếu model đã ràng buộc ngầm định không được tìm thấy. Tuy nhiên, bạn có thể tùy chỉnh hành vi bằng cách gọi method `misssing` khi định nghĩa tuyến đường. method `missing` chấp nhận một closure, nó sẽ đượ gọi nếu một model ràng buộc ngầm định không được tìm thấy:
 ```PHP
 use App\Http\Controllers\LocationsController;
 use Illuminate\Http\Request;
@@ -397,7 +397,7 @@ Route::get('/locations/{location:slug}', [LocationsController::class, 'show'])
 ```
 
 ### Ràng buộc tường minh
-Để đăng ký rang buộc tường minh, sử dụng phương thức `model` của tuyến đường để chỉ định lớp cho tham số cho trước. Bạn nên định nghĩa các ràng buộc tường minh ở đầu lớp `RouteServiceProvider ` trong phương thức `boot`:
+Để đăng ký rang buộc tường minh, sử dụng method `model` của tuyến đường để chỉ định lớp cho tham số cho trước. Bạn nên định nghĩa các ràng buộc tường minh ở đầu lớp `RouteServiceProvider ` trong method `boot`:
 ```PHP
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
@@ -424,7 +424,7 @@ Route::get('/users/{user}', function (User $user) {
 ```
 
 #### Customizing The Resolution Logic
-Nếu bạn muốn định nghĩa một logic giải quyết ràng buộc model của riêng bạn, bạn có thể sử dụng phương thức `Route::bind`. Một closure bạn truyền vào phương thức `bind` sẽ nhận giá trị của phân đoạn URI và sẽ trả về một instance của lớp được đưa vào tuyến. Tuy chỉnh này sẽ được đặt trong phương thức `boot` của `RouteServiceProvider`:
+Nếu bạn muốn định nghĩa một logic giải quyết ràng buộc model của riêng bạn, bạn có thể sử dụng method `Route::bind`. Một closure bạn truyền vào method `bind` sẽ nhận giá trị của phân đoạn URI và sẽ trả về một instance của lớp được đưa vào tuyến. Tuy chỉnh này sẽ được đặt trong method `boot` của `RouteServiceProvider`:
 ```PHP
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
@@ -444,7 +444,7 @@ public function boot()
 }
 ```
 
-Ngoài ra bạn có thể ghi đè lên phương thức `resolveRouteBinding` trong Eloquent model.
+Ngoài ra bạn có thể ghi đè lên method `resolveRouteBinding` trong Eloquent model.
 ```PHP
 /**
  * Retrieve the model for a bound value.
@@ -460,7 +460,7 @@ public function resolveRouteBinding($value, $field = null)
 ```
 
 ## Tuyến dự phòng
-Sử dụng phương thức `Route:fallback`, bạn có thể định nghĩa một tuyến cái mà sẽ được thực hiện khi không có tuyến nào khác khớp với request đến. 
+Sử dụng method `Route:fallback`, bạn có thể định nghĩa một tuyến cái mà sẽ được thực hiện khi không có tuyến nào khác khớp với request đến. 
 ```PHP
 Route::fallback(function () {
     //
@@ -486,7 +486,7 @@ Bạn cũng có thể sử dụng `method~ của [Blade directive](https://larav
 ```
 
 ## Accessing The Current Route
-Bạn có thể sử dụng các phương thức `current`, `currentRouteName`, và `currentRouteAction` để truy cập thông tin về tuyến đường đang xử lý request:
+Bạn có thể sử dụng các method `current`, `currentRouteName`, và `currentRouteAction` để truy cập thông tin về tuyến đường đang xử lý request:
 ```PHP
 use Illuminate\Support\Facades\Route;
 
