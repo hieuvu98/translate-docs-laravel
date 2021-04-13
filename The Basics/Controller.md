@@ -53,7 +53,7 @@ sẽ được gọi và tham số của tuyến sẽ được truyền đến me
 
 ## Single Action Controllers
 Nếu một hành động controller phức tạo, bạn có thể thấy thuận tiện khi dành toàn bộ controller để xử lý 1 hành động. Để 
-làm được điều này, bạn cần khai báo `__invode()` bên trong controller:
+làm được điều này, bạn cần khai báo `__invoke()` bên trong controller:
 ```PHP
 <?php
 
