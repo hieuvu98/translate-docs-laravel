@@ -268,3 +268,121 @@ Ví dụ trên sẽ tạo ra những URI sau cho định tuyến `show` của t�
 
 ### Scoping Resource Routes
 
+Tính năng ràng buộc ngầm model của Laravel có thể tự động được ràng buộc lồng nhau sao cho model con đã giải quyết được xác
+nhận là thuộc về một model cha. Bằng cách sử dụng method `scoped` khi định nghĩa các tài nguuyeen lồng nhau bạn có thể kích
+hoạt xác định phạm vi tự động, xác định tài nguyên con nào nên được truy xuất bằng cách:
+```PHP
+Route::resource('photos.comments', PhotoCommentController::class)->scoped([
+    'comment' => 'slug',
+]);
+```
+
+Tuyến đường này sẽ đăng ký một tài nguyên lồng nhau có phạm vi có thể được truy cập bằng URI sau:
+```PHP
+/photos/{photo}/comments/{comment:slug}
+```
+
+### Localizing Resource URIs
+
+### Supplementing Resource Controllers
+Nếu bạn cần thêm các tuyến đường bổ sung và một controller tài nguyên ngoài bộ các tuyến mặc định, bạn nên xác định tuyến đường 
+đó trước khi gọi đến method `Route::resource`, nếu không các tuyến được xác định với method `resource` có thể vô tình ưu tiên hơn
+các tuyến đường bổ sung của bạn:
+```PHP
+use App\Http\Controller\PhotoController;
+
+Route::get('/photos/popular', [PhotoController::class, 'popular']);
+Route::resource('photos', PhotoController::class);
+```
+
+## Dependency Injection & Controllers
+#### Constructor Injection
+Phần service container của Laravel được dùng để xử lý tất cả các controller của Laravel. Kết quả là, bạn có thể "type-hint" bất 
+cứ thành phần phụ thuộc nào mà controller của bạn cần vào trong constructor của controller. Các thành phần phụ thuộc sẽ được tự 
+động xử lý và được thêm vào trong "instance" của controller:
+```PHP
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Repositories\UserRepository;
+
+class UserController extends Controller
+{
+    /**
+     * The user repository instance.
+     */
+    protected $users;
+
+    /**
+     * Create a new controller instance.
+     *
+     * @param  \App\Repositories\UserRepository  $users
+     * @return void
+     */
+    public function __construct(UserRepository $users)
+    {
+        $this->users = $users;
+    }
+}
+```
+
+### Method Injection
+Ngoài constructor injection, bạn cũng có thể "type-hint" các thành phần phụ thuộc trong các method của controller. 
+Ví dụ, hãy "type-hint" instance của `Illuminate\Http\Request` vào một trong những method của ta:
+```PHP
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+
+class UserController extends Controller
+{
+    /**
+     * Store a new user.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        $name = $request->name;
+
+        //
+    }
+}
+```
+
+Nếu như method của controller của bạn cũng chờ đợi đầu vào từ tham sổ của định tuyến, thì đơn giản là liệt kê các đối số của 
+định tuyến vào phía sau các thành phần phụ thuộc khác. Ví dụ, nếu định tuyến của bạn được định nghĩa như sau:
+```PHP
+use App\Http\Controllers\UserController;
+
+Route::put('/user/{id}', [UserController::class, 'update']);
+```
+
+Bạn vẫn có thể "type-hint" `Illuminate\Http\Request` và truy cập vào tham số định tuyến của bạn id bằng cách định nghĩa method 
+controller của bạn như sau:
+```PHP
+?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+
+class UserController extends Controller
+{
+    /**
+     * Update the given user.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        //
+    }
+}
+```
