@@ -1,25 +1,3 @@
-# laravel-8-docs-translate
-<p align="center"><a href="https://laravel.com" target="_blank">
-    <img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
-
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
-
-# Introduction
-
-Khi sử dụng bất kỳ công cụ nào trong thực tế, bạn cảm thấy tự tin hơn nếu bạn hiểu công cụ đo hoạt động như thế nào.
-Việc phát triền ứng dụng cũng vậy. Khi bạn hiểu các công cụ phát triển hoạt động như thế nào, bạn cảm thấy thoải mái và
-tự tin hơn khi sử dụng chúng.
-
-Mục đích của tài liệu này là cung cấp cho bạn một cái nhìn tổng quan tốt, ở cấp độ cao về các hoạt động của Laravel
-framework. Bằng cách hiểu rõ hơn về tổng thế framework, bạn sẽ cảm thấy mọi thứ bớt "huyền diệu" hơn và bạn sẽ tự tin
-hơn khi xây dựng ứng dụng của mình. Nếu bạn không hiểu tất cả thuật ngữ, dừng nản lòng! Chỉ cần cố gắng nắm bắt cơ bản
-về những gì đang diễn ra và kiến thức của bạn sẽ phát triển dần dần khi bạn khám phá các phần khác của tài liệu.
-
 # Lifecycle Overview
 
 ## First Step
@@ -46,7 +24,7 @@ HTTP Kernel kế thừa từ class <code>Illuminate/Foundation/Http/Kernel</code
 log, nhận biết môi trường ứng dụng và thực hiện các tác vụ khác cần được làm trước khi request thực sự được xử lý.
 
 HTTP Kernel cũng định nghĩa danh sách HTTP Middleware do đó tất cả các request phải đi qua trước khi chúng được xử lý
-bỏi ứng dụng. Những middleware này sẽ đọc và ghi HTTP Session, xác định xem ứng dụng có đang ở chế độ bảo trì hay không,
+bởi ứng dụng. Những middleware này sẽ đọc và ghi HTTP Session, xác định xem ứng dụng có đang ở chế độ bảo trì hay không,
 xác minh CSRF token và nhiều hơn nữa.
 
 HTTP Kernel có một phương thức handle khá đơn giản, nó nhận một request và trả về một response. Hãy nghĩ kernel như một
