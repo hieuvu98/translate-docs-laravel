@@ -1,20 +1,11 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
-
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
-
 # Controller
 
-## Giới thiệu
+## Introduction
 Thay vì định nghĩa tất cả các logic xử lý request trong tệp tin chứa các tuyến đường, bạn cũng có thể tổ chức hành vi này 
 bằng cách sử dụng lớp controller. Controller có thể nhóm logic xử lý request liên quan đến nhau vào một lớp duy nhất.Ví dụ, một lớp `UserController` có thể xử lý tất cả các request liên quan đến user, bao gồm việc hiển thị, thêm, cập nhật và xóa user. Controller được lưu trữ ở thư mục `app/Http/Controllers`.
 
-## Viết controller
-### Cơ bản về controller
+## Writing Controllers
+### Basic Controllers
 Hãy nhìn vào ví dụ về một controller cơ bản. Lưu ý rằng controller này được kế thừa từ controlelr cơ sở nằm trong Laravel:
 ```PHP
 <?php
